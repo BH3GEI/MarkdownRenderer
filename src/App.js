@@ -12,30 +12,108 @@ import CloseIcon from '@mui/icons-material/Close';
 import Editor from './components/Editor';
 import Preview from './components/Preview';
 import { marked } from 'marked';
+import ExportDialog from './components/ExportDialog';
+import SaveIcon from '@mui/icons-material/Save';
+import mermaid from 'mermaid';
+
+// 导入示例Markdown文件
+import exampleMarkdown from './example.md';
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
-  const [markdown, setMarkdown] = useState('# Welcome to Markdown Editor\n\nStart typing your markdown here...\n\n## Features\n\n- Real-time preview\n- Syntax highlighting\n- Dark mode support\n- GitHub-style markdown');
+  const [markdown, setMarkdown] = useState('');
   const [html, setHtml] = useState('');
   const [showFloatingWindow, setShowFloatingWindow] = useState(true);
+  const [openExport, setOpenExport] = useState(false);
+
+  // 加载示例Markdown文件
+  useEffect(() => {
+    fetch(exampleMarkdown)
+      .then(response => response.text())
+      .then(text => {
+        setMarkdown(text);
+      })
+      .catch(error => console.error('Error loading example markdown:', error));
+  }, []);
 
   const theme = createTheme({
     palette: {
       mode: darkMode ? 'dark' : 'light',
       primary: {
-        main: '#2196f3', // A nice blue color
+        main: '#90caf9', // Lighter blue for dark mode
+        dark: '#2196f3', // Original blue for light mode
       },
+      background: {
+        default: darkMode ? '#121212' : '#ffffff',
+        paper: darkMode ? '#1e1e1e' : '#ffffff',
+      },
+      text: {
+        primary: darkMode ? '#e0e0e0' : '#000000',
+        secondary: darkMode ? '#a0a0a0' : '#666666',
+      },
+      divider: darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
     },
   });
 
   useEffect(() => {
-    try {
-      const rendered = marked(markdown, { breaks: true });
-      setHtml(rendered);
-    } catch (error) {
-      console.error('Error rendering markdown:', error);
-      setHtml('<p>Error rendering markdown</p>');
-    }
+    // 等待 KaTeX 加载完成
+    const waitForKaTeX = () => {
+      return new Promise((resolve) => {
+        if (window.katex) {
+          resolve();
+        } else {
+          const checkKaTeX = setInterval(() => {
+            if (window.katex) {
+              clearInterval(checkKaTeX);
+              resolve();
+            }
+          }, 100);
+        }
+      });
+    };
+
+    const initializeMarked = async () => {
+      await waitForKaTeX();
+      
+      // 配置 marked 处理器
+      marked.setOptions({
+        breaks: true,
+        highlight: function(code, lang) {
+          if (lang === 'mermaid') {
+            return `<div class="mermaid" style="background: transparent;">${code}</div>`;
+          }
+          if (lang === 'echarts') {
+            return `<div class="echarts" style="width:100%;min-height:400px;background:transparent;">${code}</div>`;
+          }
+          return code;
+        },
+        extensions: [{
+          name: 'math',
+          level: 'block',
+          tokenizer(src) {
+            const match = src.match(/^\$\$([\s\S]+?)\$\$/);
+            if (match) {
+              return {
+                type: 'paragraph',
+                raw: match[0],
+                text: match[0],
+                tokens: []
+              };
+            }
+          }
+        }]
+      });
+
+      try {
+        const rendered = marked(markdown);
+        setHtml(rendered);
+      } catch (error) {
+        console.error('渲染 markdown 时出错:', error);
+        setHtml('<p>渲染出错</p>');
+      }
+    };
+
+    initializeMarked();
   }, [markdown]);
 
   useEffect(() => {
@@ -49,8 +127,34 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        setOpenExport(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: darkMode ? 'dark' : 'default',
+      securityLevel: 'loose'
+    });
+  }, [darkMode]);
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+  };
+
+  const handleExportClose = () => {
+    setOpenExport(false);
   };
 
   return (
@@ -62,6 +166,14 @@ function App() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Markdown Editor
             </Typography>
+            <IconButton
+              color="inherit"
+              onClick={() => setOpenExport(true)}
+              sx={{ ml: 1 }}
+              title="Save (Ctrl+S)"
+            >
+              <SaveIcon />
+            </IconButton>
             <IconButton onClick={toggleDarkMode} color="inherit">
               {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
@@ -140,6 +252,12 @@ function App() {
             </Box>
           </Box>
         )}
+        <ExportDialog 
+          open={openExport}
+          onClose={handleExportClose}
+          markdown={markdown}
+          html={html}
+        />
       </Box>
     </ThemeProvider>
   );

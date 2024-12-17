@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmarkdown_renderer=self.webpackChunkmarkdown_renderer||[]).push([[71],{6071:(e,r,c)=>{c.d(r,{createArchitectureServices:()=>a.S});var a=c(6677);c(6660)}}]);

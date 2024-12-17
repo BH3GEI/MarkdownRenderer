@@ -30,8 +30,8 @@ const Editor = ({ value, onChange, darkMode }) => {
             fontSize: '14px',
           },
           '&.cm-editor': {
-            backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
-            color: darkMode ? '#d4d4d4' : '#000000',
+            backgroundColor: darkMode ? '#121212' : '#ffffff',
+            color: darkMode ? '#e0e0e0' : '#000000',
           },
           '.cm-gutters': {
             backgroundColor: darkMode ? '#1e1e1e' : '#f5f5f5',

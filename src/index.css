@@ -67,23 +67,53 @@ code {
 
 /* Dark mode styles */
 [data-theme='dark'] .preview pre {
-  background-color: #2d2d2d;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
 }
 
 [data-theme='dark'] .preview code {
   background-color: rgba(255,255,255,0.1);
+  color: #e0e0e0;
 }
 
 [data-theme='dark'] .preview blockquote {
-  border-left-color: #4a4a4a;
-  color: #a3a3a3;
+  border-left-color: #424242;
+  color: #b0b0b0;
+  background-color: rgba(255,255,255,0.05);
 }
 
 [data-theme='dark'] .preview table th,
 [data-theme='dark'] .preview table td {
-  border-color: #4a4a4a;
+  border-color: #424242;
+}
+
+[data-theme='dark'] .preview table th {
+  background-color: #1a1a1a;
 }
 
 [data-theme='dark'] .preview table tr:nth-child(2n) {
-  background-color: #2d2d2d;
+  background-color: #1a1a1a;
+}
+
+[data-theme='dark'] .preview h1,
+[data-theme='dark'] .preview h2 {
+  border-bottom-color: #424242;
+}
+
+[data-theme='dark'] .preview a {
+  color: #90caf9;
+}
+
+[data-theme='dark'] .preview img {
+  opacity: 0.9;
+}
+
+.mermaid {
+  background: transparent !important;
+  margin: 1em 0;
+}
+
+.echarts {
+  margin: 1em 0;
+  min-height: 400px;
 }

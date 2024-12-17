@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # 编译React项目
+export NODE_OPTIONS="--max-old-space-size=4096"  # 设置为 4GB
 npm run build
 
 # 确保docs目录存在
