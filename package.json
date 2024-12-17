@@ -1,0 +1,46 @@
+{
+  "name": "markdown-renderer",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://bh3gei.github.io/MarkdownRenderer",
+  "dependencies": {
+    "@codemirror/lang-markdown": "^6.3.1",
+    "@codemirror/language": "^6.10.7",
+    "@codemirror/state": "^6.5.0",
+    "@codemirror/view": "^6.35.3",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.2.1",
+    "@mui/material": "^6.2.1",
+    "codemirror": "^6.0.1",
+    "cra-template": "1.2.0",
+    "marked": "^15.0.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "BROWSER=none react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
