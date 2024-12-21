@@ -28,6 +28,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
+    "build:docs": "react-app-rewired build && (if exist docs rmdir /s /q docs) && move build docs",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
