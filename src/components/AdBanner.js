@@ -47,6 +47,7 @@ const AdBanner = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [showAd, setShowAd] = useState(false);
+  const [adLoaded, setAdLoaded] = useState(false);
   const messages = [
     { text: "点我看看广告，求你了，我需要钱 (｡◕‿◕｡)", lang: "cn" },
     { text: "Please click me to see the ad, I need money", lang: "en" },
@@ -63,14 +64,34 @@ const AdBanner = () => {
     // 初始化 AdSense
     if (showAd) {
       try {
+        // 添加广告加载事件监听
+        const adInterval = setInterval(() => {
+          const adElement = document.querySelector('.adsbygoogle');
+          if (adElement && adElement.innerHTML.trim() !== '') {
+            setAdLoaded(true);
+            clearInterval(adInterval);
+          }
+        }, 1000);
+
+        // 5秒后如果广告还没加载，就清除定时器
+        setTimeout(() => {
+          clearInterval(adInterval);
+          if (!adLoaded) {
+            setShowAd(false);
+          }
+        }, 5000);
+
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch (error) {
         console.error('AdSense error:', error);
+        setShowAd(false);
       }
     }
 
-    return () => clearInterval(timer);
-  }, [showAd]);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [showAd, adLoaded]);
 
   const handleClick = (e) => {
     if (e.target.closest('.close-button')) {
@@ -78,6 +99,7 @@ const AdBanner = () => {
     }
     console.log('Ad banner clicked');
     setShowAd(true);
+    setAdLoaded(false);
   };
 
   if (!isVisible) {
@@ -98,7 +120,7 @@ const AdBanner = () => {
         <CloseIcon fontSize="small" />
       </CloseButton>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, pr: 3 }}>
-        {!showAd ? (
+        {!showAd || !adLoaded ? (
           // 显示轮播消息
           messages.map((msg, index) => (
             <MessageText
